@@ -45,7 +45,7 @@ CREATE TABLE student_groups (
     creator_id SMALLINT UNSIGNED,
     PRIMARY KEY (id),
     FOREIGN KEY (creator_id) REFERENCES users (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE students_to_groups (
@@ -53,9 +53,9 @@ CREATE TABLE students_to_groups (
     group_id TINYINT UNSIGNED,
     PRIMARY KEY (student_id, group_id),
     FOREIGN KEY (student_id) REFERENCES users (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (group_id) REFERENCES student_groups (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE teachers_to_groups (
@@ -63,9 +63,9 @@ CREATE TABLE teachers_to_groups (
     group_id TINYINT UNSIGNED,
     PRIMARY KEY (teacher_id, group_id),
     FOREIGN KEY (teacher_id) REFERENCES users (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (group_id) REFERENCES student_groups (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE subjects (
@@ -77,7 +77,7 @@ CREATE TABLE subjects (
     creator_id SMALLINT UNSIGNED,
     PRIMARY KEY (id),
     FOREIGN KEY (creator_id) REFERENCES users (id)
-        ON DELETE CASCADE ON UPDATE CASCADE 
+        ON DELETE RESTRICT ON UPDATE RESTRICT 
 );
 
 CREATE TABLE teachers_to_subjects (
@@ -85,9 +85,9 @@ CREATE TABLE teachers_to_subjects (
     subject_id TINYINT UNSIGNED,
     PRIMARY KEY (teacher_id, subject_id),
     FOREIGN KEY (teacher_id) REFERENCES users (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (subject_id) REFERENCES subjects (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE groups_to_subjects (
@@ -95,9 +95,9 @@ CREATE TABLE groups_to_subjects (
     subject_id TINYINT UNSIGNED,
     PRIMARY KEY (group_id, subject_id),
     FOREIGN KEY (group_id) REFERENCES student_groups (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (subject_id) REFERENCES subjects (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE tests (
@@ -113,7 +113,7 @@ CREATE TABLE tests (
     creator_id SMALLINT UNSIGNED NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (creator_id) REFERENCES users (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE tests_to_subjects (
@@ -121,9 +121,9 @@ CREATE TABLE tests_to_subjects (
     subject_id TINYINT UNSIGNED,
     PRIMARY KEY (test_id, subject_id),
     FOREIGN KEY (test_id) REFERENCES tests (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (subject_id) REFERENCES subjects (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE terms (
@@ -132,7 +132,7 @@ CREATE TABLE terms (
     test_id SMALLINT UNSIGNED,
     PRIMARY KEY (id),
     FOREIGN KEY (test_id) REFERENCES tests (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE questions (
@@ -146,7 +146,7 @@ CREATE TABLE questions (
     deleted_at TIMESTAMP DEFAULT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (test_id) REFERENCES tests (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE answer_options (
@@ -155,7 +155,7 @@ CREATE TABLE answer_options (
     value TEXT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (question_id) REFERENCES questions (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE ans_opt_to_questions (
@@ -163,9 +163,9 @@ CREATE TABLE ans_opt_to_questions (
     ansopt_id MEDIUMINT UNSIGNED,
     PRIMARY KEY (question_id, ansopt_id),
     FOREIGN KEY (question_id) REFERENCES questions (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (ansopt_id) REFERENCES answer_options (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE terms_to_questions (
@@ -173,9 +173,9 @@ CREATE TABLE terms_to_questions (
     term_id MEDIUMINT UNSIGNED,
     PRIMARY KEY (question_id, term_id),
     FOREIGN KEY (question_id) REFERENCES questions (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (term_id) REFERENCES terms (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE test_results (
@@ -186,9 +186,9 @@ CREATE TABLE test_results (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
     FOREIGN KEY (test_id) REFERENCES tests (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (student_id) REFERENCES users (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE terms_to_results (
@@ -197,9 +197,9 @@ CREATE TABLE terms_to_results (
     count SMALLINT UNSIGNED NOT NULL,
     PRIMARY KEY (result_id, term_id),
     FOREIGN KEY (result_id) REFERENCES test_results (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (term_id) REFERENCES terms (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE answers (
@@ -210,9 +210,9 @@ CREATE TABLE answers (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
     FOREIGN KEY (question_id) REFERENCES questions (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (student_id) REFERENCES users (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 CREATE TABLE terms_to_answers (
@@ -221,7 +221,7 @@ CREATE TABLE terms_to_answers (
     is_correct BOOLEAN NOT NULL,
     PRIMARY KEY (answer_id, term_id),
     FOREIGN KEY (answer_id) REFERENCES answers (id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (term_id) REFERENCES terms (id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE RESTRICT ON UPDATE RESTRICT
 );
