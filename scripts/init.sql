@@ -106,6 +106,7 @@ CREATE TABLE tests (
     opened_at TIMESTAMP NOT NULL,
     closed_at TIMESTAMP,
     questions_count TINYINT UNSIGNED,
+    is_multiple BOOLEAN NOT NULL DEFAULT FALSE,
     is_adaptive BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NULL,
