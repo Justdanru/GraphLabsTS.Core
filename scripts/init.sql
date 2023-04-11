@@ -26,7 +26,7 @@ CREATE TABLE users (
     surname VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) DEFAULT NULL,
     login VARCHAR(20) UNIQUE,
-    password VARCHAR(64) UNIQUE,
+    password VARCHAR(64),
     salt VARCHAR(32) UNIQUE,
     role TINYINT NOT NULL DEFAULT 2, 
     tg_id VARCHAR(13) UNIQUE DEFAULT NULL,
