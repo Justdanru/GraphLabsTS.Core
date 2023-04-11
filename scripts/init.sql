@@ -21,7 +21,7 @@ DROP TABLE IF EXISTS users;
 -- 1 - teacher
 -- 0 - admin
 CREATE TABLE users (
-    id SMALLINT UNSIGNED,
+    id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) DEFAULT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE student_groups (
-    id TINYINT UNSIGNED,
+    id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
     name VARCHAR(15) NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE teachers_to_groups (
 );
 
 CREATE TABLE subjects (
-    id TINYINT UNSIGNED,
+    id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
     title VARCHAR(150) NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE groups_to_subjects (
 );
 
 CREATE TABLE tests (
-    id SMALLINT UNSIGNED,
+    id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
     title VARCHAR(100) NOT NULL,
     opened_at TIMESTAMP NOT NULL,
     closed_at TIMESTAMP,
@@ -128,7 +128,7 @@ CREATE TABLE tests_to_subjects (
 );
 
 CREATE TABLE terms (
-    id MEDIUMINT UNSIGNED,
+    id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
     value VARCHAR (100) NOT NULL,
     test_id SMALLINT UNSIGNED,
     PRIMARY KEY (id),
@@ -137,7 +137,7 @@ CREATE TABLE terms (
 );
 
 CREATE TABLE questions (
-    id MEDIUMINT UNSIGNED,
+    id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
     test_id SMALLINT UNSIGNED,
     type_id TINYINT UNSIGNED NOT NULL,
     content TEXT NOT NULL,
@@ -151,7 +151,7 @@ CREATE TABLE questions (
 );
 
 CREATE TABLE answer_options (
-    id MEDIUMINT UNSIGNED,
+    id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
     question_id MEDIUMINT UNSIGNED,
     value TEXT NOT NULL,
     PRIMARY KEY (id),
@@ -180,7 +180,7 @@ CREATE TABLE terms_to_questions (
 );
 
 CREATE TABLE test_results (
-    id INT UNSIGNED,
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     test_id SMALLINT UNSIGNED,
     student_id SMALLINT UNSIGNED,
     result TINYINT UNSIGNED NOT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE terms_to_results (
 );
 
 CREATE TABLE answers (
-    id BIGINT UNSIGNED,
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     question_id MEDIUMINT UNSIGNED,
     student_id SMALLINT UNSIGNED,
     value TEXT NOT NULL,
