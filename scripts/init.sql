@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS ans_opt_to_questions;
+-- DROP TABLE IF EXISTS ans_opt_to_questions;
 DROP TABLE IF EXISTS terms_to_questions;
 DROP TABLE IF EXISTS tests_to_subjects;
 DROP TABLE IF EXISTS teachers_to_subjects;
@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS terms_to_answers;
 DROP TABLE IF EXISTS terms_to_results;
 DROP TABLE IF EXISTS answers;
 DROP TABLE IF EXISTS test_results;
-DROP TABLE IF EXISTS answer_options;
+-- DROP TABLE IF EXISTS answer_options;
 DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS terms;
 DROP TABLE IF EXISTS tests;
@@ -141,6 +141,7 @@ CREATE TABLE questions (
     test_id SMALLINT UNSIGNED,
     type_id TINYINT UNSIGNED NOT NULL,
     content TEXT NOT NULL,
+    answer_options TEXT NOT NULL,
     answer TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NULL,
@@ -150,24 +151,24 @@ CREATE TABLE questions (
         ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
-CREATE TABLE answer_options (
-    id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    question_id MEDIUMINT UNSIGNED,
-    value TEXT NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (question_id) REFERENCES questions (id)
-        ON DELETE RESTRICT ON UPDATE RESTRICT
-);
+-- CREATE TABLE answer_options (
+--     id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+--     question_id MEDIUMINT UNSIGNED,
+--     value TEXT NOT NULL,
+--     PRIMARY KEY (id),
+--     FOREIGN KEY (question_id) REFERENCES questions (id)
+--         ON DELETE RESTRICT ON UPDATE RESTRICT
+-- );
 
-CREATE TABLE ans_opt_to_questions (
-    question_id MEDIUMINT UNSIGNED,
-    ansopt_id MEDIUMINT UNSIGNED,
-    PRIMARY KEY (question_id, ansopt_id),
-    FOREIGN KEY (question_id) REFERENCES questions (id)
-        ON DELETE RESTRICT ON UPDATE RESTRICT,
-    FOREIGN KEY (ansopt_id) REFERENCES answer_options (id)
-        ON DELETE RESTRICT ON UPDATE RESTRICT
-);
+-- CREATE TABLE ans_opt_to_questions (
+--     question_id MEDIUMINT UNSIGNED,
+--     ansopt_id MEDIUMINT UNSIGNED,
+--     PRIMARY KEY (question_id, ansopt_id),
+--     FOREIGN KEY (question_id) REFERENCES questions (id)
+--         ON DELETE RESTRICT ON UPDATE RESTRICT,
+--     FOREIGN KEY (ansopt_id) REFERENCES answer_options (id)
+--         ON DELETE RESTRICT ON UPDATE RESTRICT
+-- );
 
 CREATE TABLE terms_to_questions (
     question_id MEDIUMINT UNSIGNED,
