@@ -6,6 +6,9 @@ const (
 	TrueFalseQuestionCode  int8 = 3
 	MatchQuestionCode      int8 = 4
 	OrderQuestionCode      int8 = 5
+	AdminRoleCode          int8 = 0
+	TeacherRoleCode        int8 = 1
+	StudentRoleCode        int8 = 2
 )
 
 type Question struct {
@@ -26,4 +29,14 @@ type Test struct {
 	Groups     []string
 	Terms      []string
 	Questions  []Question
+}
+
+type User struct {
+	Name       string
+	Surname    string
+	LastName   string
+	Login      string
+	Password   string
+	RoleCode   int8
+	TelegramID string
 }

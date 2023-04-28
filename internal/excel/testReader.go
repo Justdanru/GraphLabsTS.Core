@@ -2,9 +2,10 @@ package excel
 
 import (
 	"errors"
-	"graphlabsts/internal/types"
 	"strconv"
 	"strings"
+
+	"graphlabsts.core/internal/types"
 
 	"github.com/xuri/excelize/v2"
 )
