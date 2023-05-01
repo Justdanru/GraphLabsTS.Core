@@ -1,0 +1,21 @@
+{{define "loginForm"}}
+    <div class="d-flex align-items-center" style="height: 100vh;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mx-auto border border-dark rounded-4 p-4">
+                    <form class="d-grid" method="post" action="/login">
+                        <div class="mb-3 py-1">
+                            <label for="loginInput" class="form_label">Логин</label>
+                            <input class="form-control border-secondary" id="loginInput" name="login">
+                        </div>
+                        <div class="mb-3 py-1">
+                            <label for="passwordInput" class="form_label">Пароль</label>
+                            <input type="password" class="form-control border-secondary" id="passwordInput" name="password">
+                        </div>
+                        <button type="submit" class="btn btn-primary mx-auto">Войти</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
