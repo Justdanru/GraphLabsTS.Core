@@ -18,7 +18,7 @@ func main() {
 		Tmpl: templates,
 		Repo: &repo.MySQLRepo{},
 	}
-	err := handlers.Repo.Connect("root:2808@tcp(localhost:3306)/graphlabs_ts?&charset=utf8&interpolateParams=true")
+	err := handlers.Repo.Connect("root:2808@tcp(mysql:3306)/graphlabs_ts?&charset=utf8&interpolateParams=true")
 	if err != nil {
 		fmt.Printf("Ошибка при подключении к БД.\n")
 		return
@@ -27,7 +27,7 @@ func main() {
 	// TODO Сделать перенаправление на страницу входа или профиль с URL "/"
 	r := mux.NewRouter()
 	r.HandleFunc("/login", handlers.LoginPage).Methods("GET")
-	r.HandleFunc("/login", handlers.Login).Methods("POST")
+	r.HandleFunc("/api/auth/login", handlers.Authenticate).Methods("POST")
 	r.HandleFunc("/profile", handlers.ProfilePage).Methods("GET")
 
 	err = http.ListenAndServe(":8080", r)
