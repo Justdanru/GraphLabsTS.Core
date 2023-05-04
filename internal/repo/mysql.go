@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	_ "github.com/go-sql-driver/mysql"
 	"golang.org/x/crypto/sha3"
 
 	"graphlabsts.core/internal/models"
@@ -30,15 +31,18 @@ func (r *MySQLRepo) Connect(dsn string) error {
 		return ErrConnectingDB
 	}
 
-	err = r.DB.Ping()
-	if err != nil {
-		return ErrConnectingDB
-	}
+	// Если раскоментить, то не будет работать в docker-compose! Непонятно! Разобраться!
+	//err = r.DB.Ping()
+	//if err != nil {
+	//	fmt.Println("Ping")
+	//	fmt.Println(err.Error())
+	//	return ErrConnectingDB
+	//}
 
 	return nil
 }
 
-func (r *MySQLRepo) Authorize(login string, password string) (*models.UserAuthData, error) {
+func (r *MySQLRepo) Authenticate(login string, password string) (*models.UserAuthData, error) {
 	uad := &models.UserAuthData{}
 	var salt, userPassword string
 
@@ -49,7 +53,6 @@ func (r *MySQLRepo) Authorize(login string, password string) (*models.UserAuthDa
 	}
 
 	if userPassword != getPasswordHash(password, salt) {
-		fmt.Println(getPasswordHash(password, salt))
 		return nil, ErrWrongPassword
 	}
 
