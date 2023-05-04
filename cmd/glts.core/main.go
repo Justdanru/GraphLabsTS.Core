@@ -30,5 +30,6 @@ func main() {
 	r.HandleFunc("/login", handlers.Login).Methods("POST")
 	r.HandleFunc("/profile", handlers.ProfilePage).Methods("GET")
 
-	http.ListenAndServe(":8080", r)
+	err = http.ListenAndServe(":8080", r)
+	panic(err)
 }
