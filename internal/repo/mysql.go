@@ -42,17 +42,17 @@ func (r *MySQLRepo) Connect(dsn string) error {
 	return nil
 }
 
-func (r *MySQLRepo) Authenticate(login string, password string) (*models.UserAuthData, error) {
+func (r *MySQLRepo) Authenticate(userCredentials *models.UserCredentials) (*models.UserAuthData, error) {
 	uad := &models.UserAuthData{}
 	var salt, userPassword string
 
-	row := r.DB.QueryRow("SELECT id, role, salt, password FROM users WHERE login = ?;", login)
+	row := r.DB.QueryRow("SELECT id, role, salt, password FROM users WHERE login = ?;", userCredentials.Login)
 	err := row.Scan(&uad.Id, &uad.RoleCode, &salt, &userPassword)
 	if err == sql.ErrNoRows {
 		return nil, ErrNoUser
 	}
 
-	if userPassword != getPasswordHash(password, salt) {
+	if userPassword != getPasswordHash(userCredentials.Password, salt) {
 		return nil, ErrWrongPassword
 	}
 
