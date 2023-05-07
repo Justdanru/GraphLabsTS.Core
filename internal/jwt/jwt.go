@@ -9,6 +9,7 @@ import (
 
 var jwtSecretKey = []byte("secret JWT key")
 
+// TODO Возможно, стоит перенести это в переменные окружения
 const (
 	AUTH_TOKEN_DURATION_MINUTES  = 5
 	REFRESH_TOKEN_DURATION_HOURS = 5
