@@ -21,7 +21,7 @@ type Handler struct {
 func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	err := h.Tmpl.ExecuteTemplate(w, "loginPage", nil)
 	if err != nil {
-		http.Error(w, "Template error", http.StatusInternalServerError)
+		jsonError(w, http.StatusInternalServerError, "Template error")
 		return
 	}
 }
@@ -29,24 +29,24 @@ func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		jsonError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	userCredentials := &models.UserCredentials{}
 	err = json.Unmarshal(body, userCredentials)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		jsonError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	uad, err := h.Repo.Authenticate(userCredentials)
 	if err == repo.ErrNoUser {
-		http.Error(w, "user not found", http.StatusBadRequest)
+		jsonError(w, http.StatusBadRequest, "user not found")
 		return
 	}
 	if err == repo.ErrWrongPassword {
-		http.Error(w, "wrong password", http.StatusBadRequest)
+		jsonError(w, http.StatusBadRequest, "wrong password")
 		return
 	}
 
@@ -75,15 +75,15 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ProfilePage(w http.ResponseWriter, r *http.Request) {
 	err := h.Tmpl.ExecuteTemplate(w, "profilePage", nil)
 	if err != nil {
-		http.Error(w, "Template error", http.StatusInternalServerError)
+		jsonError(w, http.StatusInternalServerError, "Template error")
 		return
 	}
 }
 
-func jsonError(w io.Writer, status int, msg string) {
+func jsonError(w http.ResponseWriter, statusCode int, msg string) {
+	w.WriteHeader(statusCode)
 	resp, _ := json.Marshal(map[string]interface{}{
-		"status": status,
-		"error":  msg,
+		"error": msg,
 	})
 	w.Write(resp)
 }
