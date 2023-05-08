@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"io"
 	"net/http"
 
+	"golang.org/x/crypto/sha3"
 	"graphlabsts.core/internal/jwt"
 	"graphlabsts.core/internal/models"
 	"graphlabsts.core/internal/repo"
@@ -107,4 +109,12 @@ func jsonError(w http.ResponseWriter, statusCode int, msg string) {
 		"error": msg,
 	})
 	w.Write(resp)
+}
+
+func getFingerprint(r *http.Request) string {
+	headers := ""
+	headers += r.Header.Get("X-Forwarded-For") + " : "
+	headers += r.Header.Get("User-Agent") + ":"
+	headers += r.Header.Get("Accept-Language")
+	return fmt.Sprintf("%x", sha3.Sum256([]byte(headers)))
 }
