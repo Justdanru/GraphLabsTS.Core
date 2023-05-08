@@ -9,6 +9,7 @@ import (
 	"graphlabsts.core/internal/jwt"
 	"graphlabsts.core/internal/models"
 	"graphlabsts.core/internal/repo"
+	"graphlabsts.core/internal/validators"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -37,6 +38,24 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, userCredentials)
 	if err != nil {
 		jsonError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var isValid bool
+	isValid, err = validators.IsLoginValid(userCredentials.Login)
+	if err != nil {
+		jsonError(w, http.StatusInternalServerError, err.Error())
+		return
+	} else if !isValid {
+		jsonError(w, http.StatusBadRequest, "wrong login format")
+		return
+	}
+	isValid, err = validators.IsPasswordValid(userCredentials.Password)
+	if err != nil {
+		jsonError(w, http.StatusInternalServerError, err.Error())
+		return
+	} else if !isValid {
+		jsonError(w, http.StatusBadRequest, "wrong password format")
 		return
 	}
 

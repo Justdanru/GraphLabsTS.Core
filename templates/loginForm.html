@@ -12,6 +12,11 @@
                             <label for="passwordInput" class="form_label">Пароль</label>
                             <input type="password" class="form-control border-secondary" id="passwordInput" name="password">
                         </div>
+                        <p class="text-danger text-center visually-hidden" id="loginWarning">Пользователь не найден</p>
+                        <p class="text-danger text-center visually-hidden" id="passwordWarning">Неправильный пароль</p>
+                        <p class="text-danger text-center visually-hidden" id="systemWarning">Ошибка сервера</p>
+                        <p class="text-danger text-center visually-hidden" id="loginFormatWarning">Недопустимый формат логина</p>
+                        <p class="text-danger text-center visually-hidden" id="passwordFormatWarning">Недопустимый формат пароля</p>
                         <button type="submit" class="btn btn-info mx-auto text-dark">Войти</button>
                     </form>
                 </div>
