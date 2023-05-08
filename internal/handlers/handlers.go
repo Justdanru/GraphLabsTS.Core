@@ -68,6 +68,7 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 		"refresh_token": refreshToken,
 	})
 
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(resp)
 	w.Write([]byte("\n\n"))
 }
@@ -81,6 +82,7 @@ func (h *Handler) ProfilePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func jsonError(w http.ResponseWriter, statusCode int, msg string) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	resp, _ := json.Marshal(map[string]interface{}{
 		"error": msg,
