@@ -39,7 +39,6 @@ CREATE TABLE refresh_sessions (
     id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
     refresh_token TEXT NOT NULL,
     fingerprint TEXT NOT NULL,
-    expires_in BIGINT UNSIGNED NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
     user_id SMALLINT UNSIGNED,
     PRIMARY KEY (id),
