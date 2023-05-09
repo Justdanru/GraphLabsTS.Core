@@ -99,8 +99,6 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	if sessionsCount > 0 {
 		err = h.Repo.DeleteAllRefreshSessionsByUserId(uad.Id)
-		fmt.Printf("Found sessions: %d\n", sessionsCount)
-		fmt.Println("Deleted refresh session")
 	}
 	if err != nil {
 		jsonError(w, http.StatusInternalServerError, err.Error())
