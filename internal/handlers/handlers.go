@@ -112,15 +112,6 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// resp, _ := json.Marshal(map[string]interface{}{
-	// 	"status":        http.StatusOK,
-	// 	"auth_token":    authToken,
-	// 	"refresh_token": refreshToken,
-	// })
-
-	// w.Header().Set("Content-Type", "application/json")
-	// w.Write(resp)
-	// w.Write([]byte("\n\n"))
 	authTokenCookie := &http.Cookie{
 		Name:     "glts_auth_token",
 		Value:    authToken,
