@@ -35,7 +35,7 @@ function wrongPasswordWarning() {
 }
 
 function systemErrorWarning() {
-    passwordWarning.classList.remove("visually-hidden")
+    systemWarning.classList.remove("visually-hidden")
 }
 
 function dropWarnings() {
