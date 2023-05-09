@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"time"
 
 	"golang.org/x/crypto/sha3"
 	"graphlabsts.core/internal/jwt"
@@ -111,10 +112,35 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// resp, _ := json.Marshal(map[string]interface{}{
+	// 	"status":        http.StatusOK,
+	// 	"auth_token":    authToken,
+	// 	"refresh_token": refreshToken,
+	// })
+
+	// w.Header().Set("Content-Type", "application/json")
+	// w.Write(resp)
+	// w.Write([]byte("\n\n"))
+	authTokenCookie := &http.Cookie{
+		Name:     "glts_auth_token",
+		Value:    authToken,
+		Expires:  time.Now().Add(jwt.AUTH_TOKEN_DURATION_MINUTES * time.Minute),
+		HttpOnly: true,
+	}
+
+	refreshTokenCookie := &http.Cookie{
+		Name:     "glts_refresh_token",
+		Value:    refreshToken,
+		Expires:  time.Now().Add(jwt.REFRESH_TOKEN_DURATION_HOURS * time.Hour),
+		HttpOnly: true,
+	}
+
+	http.SetCookie(w, authTokenCookie)
+	http.SetCookie(w, refreshTokenCookie)
+	fmt.Println("Cookies were set")
+
 	resp, _ := json.Marshal(map[string]interface{}{
-		"status":        http.StatusOK,
-		"auth_token":    authToken,
-		"refresh_token": refreshToken,
+		"url": "/profile",
 	})
 
 	w.Header().Set("Content-Type", "application/json")

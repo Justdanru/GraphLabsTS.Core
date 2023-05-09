@@ -58,6 +58,10 @@ form.addEventListener("submit", function(event) {
     xhr.setRequestHeader("Content-Type", "application/json");
 
     xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            answer = JSON.parse(this.responseText)
+            window.location.href = answer.url
+        }
         if (this.readyState == 4 && this.status == 400) {
             answer = JSON.parse(this.responseText)
             if (answer.error == "user not found") {
