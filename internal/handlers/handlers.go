@@ -29,6 +29,7 @@ func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// TODO Возможно, нужен рефакторинг
 func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -70,6 +71,7 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 		jsonError(w, http.StatusBadRequest, "wrong password")
 		return
 	}
+	uad.Fingerprint = getFingerprint(r)
 
 	authToken, err := jwt.CreateAuthToken(uad)
 	if err != nil {
@@ -78,6 +80,34 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	refreshToken, err := jwt.CreateRefreshToken(uad)
+	if err != nil {
+		jsonError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	refreshSession := &models.RefreshSession{
+		RefreshToken: refreshToken,
+		Fingerprint:  uad.Fingerprint,
+		UserId:       uad.Id,
+	}
+
+	sessionsCount, err := h.Repo.GetRefreshSessionsCountByUserId(uad.Id)
+	if err != nil {
+		jsonError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if sessionsCount > 0 {
+		err = h.Repo.DeleteAllRefreshSessionsByUserId(uad.Id)
+		fmt.Printf("Found sessions: %d\n", sessionsCount)
+		fmt.Println("Deleted refresh session")
+	}
+	if err != nil {
+		jsonError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.Repo.AddRefreshSession(refreshSession)
 	if err != nil {
 		jsonError(w, http.StatusInternalServerError, err.Error())
 		return

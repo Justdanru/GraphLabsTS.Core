@@ -15,11 +15,12 @@ const (
 	REFRESH_TOKEN_DURATION_HOURS = 5
 )
 
-func createToken(userID int64, userRoleCode int64, expTime time.Time) (string, error) {
+func createToken(uad *models.UserAuthData, expTime time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":   userID,
-		"role": userRoleCode,
-		"exp":  expTime,
+		"id":          uad.Id,
+		"role":        uad.RoleCode,
+		"fingerprint": uad.Fingerprint,
+		"exp":         expTime,
 	})
 
 	tokenString, err := token.SignedString(jwtSecretKey)
@@ -31,7 +32,7 @@ func createToken(userID int64, userRoleCode int64, expTime time.Time) (string, e
 }
 
 func CreateAuthToken(uad *models.UserAuthData) (string, error) {
-	tokenString, err := createToken(uad.Id, uad.RoleCode, time.Now().Add(AUTH_TOKEN_DURATION_MINUTES*time.Minute))
+	tokenString, err := createToken(uad, time.Now().Add(AUTH_TOKEN_DURATION_MINUTES*time.Minute))
 	if err != nil {
 		return "", err
 	}
@@ -40,7 +41,7 @@ func CreateAuthToken(uad *models.UserAuthData) (string, error) {
 }
 
 func CreateRefreshToken(uad *models.UserAuthData) (string, error) {
-	tokenString, err := createToken(uad.Id, uad.RoleCode, time.Now().Add(REFRESH_TOKEN_DURATION_HOURS*time.Hour))
+	tokenString, err := createToken(uad, time.Now().Add(REFRESH_TOKEN_DURATION_HOURS*time.Hour))
 	if err != nil {
 		return "", err
 	}

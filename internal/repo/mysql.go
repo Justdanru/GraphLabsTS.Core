@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 	"golang.org/x/crypto/sha3"
@@ -57,6 +58,45 @@ func (r *MySQLRepo) Authenticate(userCredentials *models.UserCredentials) (*mode
 	}
 
 	return uad, nil
+}
+
+func (r *MySQLRepo) GetRefreshSessionsCountByUserId(userId int64) (int, error) {
+	var resultStr string
+	row := r.DB.QueryRow("SELECT COUNT(id) FROM refresh_sessions WHERE user_id = ?;", userId)
+	err := row.Scan(&resultStr)
+	if err != nil {
+		return 0, err
+	}
+
+	result, err := strconv.Atoi(resultStr)
+	if err != nil {
+		return 0, err
+	}
+
+	return result, nil
+}
+
+func (r *MySQLRepo) AddRefreshSession(rs *models.RefreshSession) error {
+	_, err := r.DB.Exec(
+		"INSERT INTO refresh_sessions (refresh_token, fingerprint, user_id) VALUES (?, ?, ?);",
+		rs.RefreshToken, rs.Fingerprint, rs.UserId,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *MySQLRepo) DeleteAllRefreshSessionsByUserId(userId int64) error {
+	_, err := r.DB.Exec(
+		"DELETE FROM refresh_sessions WHERE user_id = ?;", userId,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func getPasswordHash(password string, salt string) string {
