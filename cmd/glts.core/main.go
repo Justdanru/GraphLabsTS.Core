@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"graphlabsts.core/internal/handlers"
+	"graphlabsts.core/internal/middleware"
 	"graphlabsts.core/internal/repo"
 
 	"github.com/gorilla/mux"
@@ -25,11 +26,18 @@ func main() {
 	}
 
 	// TODO Сделать перенаправление на страницу входа или профиль с URL "/"
-	r := mux.NewRouter()
-	r.HandleFunc("/login", handlers.LoginPage).Methods("GET")
-	r.HandleFunc("/api/auth/login", handlers.Authenticate).Methods("POST")
-	r.HandleFunc("/profile", handlers.ProfilePage).Methods("GET")
+	router := mux.NewRouter()
 
-	err = http.ListenAndServe(":8080", r)
+	router.HandleFunc("/login", handlers.LoginPage).Methods("GET")
+	router.HandleFunc("/api/auth", handlers.Authenticate).Methods("POST")
+	router.HandleFunc("/profile", handlers.ProfilePage).Methods("GET")
+
+	authMiddleware := middleware.Middleware{
+		UncheckPaths: []string{"/login"},
+	}
+
+	router.Use(authMiddleware.Authorization)
+
+	err = http.ListenAndServe(":8080", router)
 	panic(err)
 }

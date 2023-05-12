@@ -54,7 +54,7 @@ form.addEventListener("submit", function(event) {
     
     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", "/api/auth/login", true);
+    xhr.open("POST", "/api/auth", true);
     xhr.setRequestHeader("Content-Type", "application/json");
 
     xhr.onreadystatechange = function() {

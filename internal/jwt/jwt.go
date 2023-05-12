@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"errors"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -13,6 +14,11 @@ var jwtSecretKey = []byte("secret JWT key")
 const (
 	AUTH_TOKEN_DURATION_MINUTES  = 5
 	REFRESH_TOKEN_DURATION_HOURS = 5
+)
+
+var (
+	ErrWrongSigningAlg = errors.New("wrong signing alg")
+	ErrNotValidToken   = errors.New("token is not valid")
 )
 
 func createToken(uad *models.UserAuthData, expTime time.Time) (string, error) {
@@ -47,4 +53,34 @@ func CreateRefreshToken(uad *models.UserAuthData) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func ParseToken(tokenString string) (*models.UserAuthData, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, ErrWrongSigningAlg
+		}
+
+		return []byte("secret JWT key"), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, ErrNotValidToken
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, ErrNotValidToken
+	}
+
+	uad := &models.UserAuthData{
+		Id:          claims["id"].(int64),
+		RoleCode:    claims["role"].(int64),
+		Fingerprint: claims["fingerprint"].(string),
+	}
+
+	return uad, nil
 }
