@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"io"
 	"net/http"
@@ -128,7 +127,6 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, authTokenCookie)
 	http.SetCookie(w, refreshTokenCookie)
-	fmt.Println("Cookies were set")
 
 	resp, _ := json.Marshal(map[string]interface{}{
 		"url": "/profile",

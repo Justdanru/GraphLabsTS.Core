@@ -33,7 +33,7 @@ func main() {
 	router.HandleFunc("/profile", handlers.ProfilePage).Methods("GET")
 
 	authMiddleware := middleware.Middleware{
-		UncheckPaths: []string{"/login"},
+		UncheckPaths: []string{"/login", "/api/auth"},
 	}
 
 	router.Use(authMiddleware.Authorization)

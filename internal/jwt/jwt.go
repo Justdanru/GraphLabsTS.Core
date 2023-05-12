@@ -77,8 +77,8 @@ func ParseToken(tokenString string) (*models.UserAuthData, error) {
 	}
 
 	uad := &models.UserAuthData{
-		Id:          claims["id"].(int64),
-		RoleCode:    claims["role"].(int64),
+		Id:          int64(claims["id"].(float64)),
+		RoleCode:    int64(claims["id"].(float64)),
 		Fingerprint: claims["fingerprint"].(string),
 	}
 
