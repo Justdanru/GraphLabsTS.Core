@@ -14,10 +14,10 @@ type Middleware struct {
 
 func (mw *Middleware) Authorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		for _, path := range mw.UncheckPaths {
 			if r.URL.Path == path {
 				next.ServeHTTP(w, r)
+				return
 			}
 		}
 
@@ -35,15 +35,14 @@ func (mw *Middleware) Authorization(next http.Handler) http.Handler {
 			return
 		}
 
-		fmt.Println(uad)
-		fmt.Println(fingerprint)
+		fmt.Println(*uad, fingerprint)
 
 		next.ServeHTTP(w, r)
 	})
 }
 
 func getAuthTokenFromRequest(r *http.Request) (string, error) {
-	cookie, err := r.Cookie("glts_auth_token")
+	cookie, err := r.Cookie("glts-auth-token")
 	if err != nil {
 		return "", err
 	}
@@ -52,7 +51,7 @@ func getAuthTokenFromRequest(r *http.Request) (string, error) {
 }
 
 func getRefreshTokenFromRequest(r *http.Request) (string, error) {
-	cookie, err := r.Cookie("glts_refresh_token")
+	cookie, err := r.Cookie("glts-refresh-token")
 	if err != nil {
 		return "", err
 	}
