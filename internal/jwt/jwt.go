@@ -21,6 +21,14 @@ var (
 	ErrNotValidToken   = errors.New("token is not valid")
 )
 
+func GetAuthTokenExpTime() time.Time {
+	return time.Now().Add(AUTH_TOKEN_DURATION_MINUTES * time.Minute)
+}
+
+func GetRefreshTokenExpTime() time.Time {
+	return time.Now().Add(REFRESH_TOKEN_DURATION_HOURS * time.Hour)
+}
+
 func createToken(uad *models.UserAuthData, expTime time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":          uad.Id,
@@ -38,7 +46,7 @@ func createToken(uad *models.UserAuthData, expTime time.Time) (string, error) {
 }
 
 func CreateAuthToken(uad *models.UserAuthData) (string, error) {
-	tokenString, err := createToken(uad, time.Now().Add(AUTH_TOKEN_DURATION_MINUTES*time.Minute))
+	tokenString, err := createToken(uad, GetAuthTokenExpTime())
 	if err != nil {
 		return "", err
 	}
@@ -47,7 +55,7 @@ func CreateAuthToken(uad *models.UserAuthData) (string, error) {
 }
 
 func CreateRefreshToken(uad *models.UserAuthData) (string, error) {
-	tokenString, err := createToken(uad, time.Now().Add(REFRESH_TOKEN_DURATION_HOURS*time.Hour))
+	tokenString, err := createToken(uad, GetRefreshTokenExpTime())
 	if err != nil {
 		return "", err
 	}

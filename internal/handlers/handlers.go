@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"io"
 	"net/http"
-	"time"
 
 	"graphlabsts.core/internal/jwt"
 	"graphlabsts.core/internal/models"
@@ -112,16 +111,18 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	authTokenCookie := &http.Cookie{
-		Name:     "glts_auth_token",
+		Name:     "glts-auth-token",
 		Value:    authToken,
-		Expires:  time.Now().Add(jwt.AUTH_TOKEN_DURATION_MINUTES * time.Minute),
+		Path:     "/",
+		Expires:  jwt.GetAuthTokenExpTime(),
 		HttpOnly: true,
 	}
 
 	refreshTokenCookie := &http.Cookie{
-		Name:     "glts_refresh_token",
+		Name:     "glts-refresh-token",
 		Value:    refreshToken,
-		Expires:  time.Now().Add(jwt.REFRESH_TOKEN_DURATION_HOURS * time.Hour),
+		Path:     "/",
+		Expires:  jwt.GetRefreshTokenExpTime(),
 		HttpOnly: true,
 	}
 
@@ -134,7 +135,6 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(resp)
-	w.Write([]byte("\n\n"))
 }
 
 func (h *Handler) ProfilePage(w http.ResponseWriter, r *http.Request) {
