@@ -28,12 +28,16 @@ func main() {
 	// TODO Сделать перенаправление на страницу входа или профиль с URL "/"
 	router := mux.NewRouter()
 
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/login", http.StatusMovedPermanently)
+	})
+
 	router.HandleFunc("/login", handlers.LoginPage).Methods("GET")
 	router.HandleFunc("/api/auth", handlers.Authenticate).Methods("POST")
 	router.HandleFunc("/profile", handlers.ProfilePage).Methods("GET")
 
 	authMiddleware := middleware.Middleware{
-		UncheckPaths: []string{"/login", "/api/auth"},
+		UncheckPaths: []string{"/", "/login", "/api/auth"},
 	}
 
 	router.Use(authMiddleware.Authorization)
