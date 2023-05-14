@@ -25,7 +25,6 @@ func main() {
 		return
 	}
 
-	// TODO Сделать перенаправление на страницу входа или профиль с URL "/"
 	router := mux.NewRouter()
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
