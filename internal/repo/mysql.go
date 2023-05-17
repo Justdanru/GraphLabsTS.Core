@@ -2,7 +2,6 @@ package repo
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"strconv"
 
@@ -15,12 +14,6 @@ import (
 type MySQLRepo struct {
 	DB *sql.DB
 }
-
-var (
-	ErrConnectingDB  = errors.New("error connecting db")
-	ErrNoUser        = errors.New("user not found")
-	ErrWrongPassword = errors.New("wrong password")
-)
 
 // TODO В будущем перенести всё в Docker и считывать переменную окружения
 var pepper string = ""

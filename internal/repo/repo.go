@@ -1,6 +1,10 @@
 package repo
 
-import "graphlabsts.core/internal/models"
+import (
+	"errors"
+
+	"graphlabsts.core/internal/models"
+)
 
 type Repo interface {
 	Connect(dsn string) error
@@ -9,3 +13,9 @@ type Repo interface {
 	AddRefreshSession(rs *models.RefreshSession) error
 	DeleteAllRefreshSessionsByUserId(userId int64) error
 }
+
+var (
+	ErrConnectingDB  = errors.New("error connecting db")
+	ErrNoUser        = errors.New("user not found")
+	ErrWrongPassword = errors.New("wrong password")
+)
