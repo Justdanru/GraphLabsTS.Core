@@ -1,4 +1,4 @@
-package middleware
+package handlers
 
 import (
 	"fmt"
@@ -8,19 +8,15 @@ import (
 	"graphlabsts.core/internal/utils"
 )
 
-type Middleware struct {
-	UncheckPaths []string
-}
-
-func (mw *Middleware) Authorization(next http.Handler) http.Handler {
+func (h *Handler) Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		for _, path := range mw.UncheckPaths {
+		for _, path := range h.UncheckAuthMiddlewarePaths {
 			if r.URL.Path == path {
 				next.ServeHTTP(w, r)
 				return
 			}
 		}
-
+		fmt.Println("Middleware is working") ////////////////////////////////////////////
 		authToken, err := getAuthTokenFromRequest(r)
 		if err != nil {
 			utils.JsonError(w, http.StatusUnauthorized, "error getting auth token")

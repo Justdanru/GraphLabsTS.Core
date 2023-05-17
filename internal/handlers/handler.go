@@ -7,6 +7,7 @@ import (
 )
 
 type Handler struct {
-	Tmpl *template.Template
-	Repo repo.Repo
+	Tmpl                       *template.Template
+	Repo                       repo.Repo
+	UncheckAuthMiddlewarePaths []string
 }

@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"graphlabsts.core/internal/handlers"
-	"graphlabsts.core/internal/middleware"
 	"graphlabsts.core/internal/repo"
 
 	"github.com/gorilla/mux"
@@ -16,8 +15,9 @@ func main() {
 	templates := template.Must(template.ParseGlob("./templates/*.html"))
 
 	handlers := &handlers.Handler{
-		Tmpl: templates,
-		Repo: &repo.MySQLRepo{},
+		Tmpl:                       templates,
+		Repo:                       &repo.MySQLRepo{},
+		UncheckAuthMiddlewarePaths: []string{"/", "/login", "/api/auth"},
 	}
 	err := handlers.Repo.Connect("root:2808@tcp(mysql:3306)/graphlabs_ts?&charset=utf8&interpolateParams=true")
 	if err != nil {
@@ -35,11 +35,7 @@ func main() {
 	router.HandleFunc("/api/auth", handlers.Authenticate).Methods("POST")
 	router.HandleFunc("/profile", handlers.ProfilePage).Methods("GET")
 
-	authMiddleware := middleware.Middleware{
-		UncheckPaths: []string{"/", "/login", "/api/auth"},
-	}
-
-	router.Use(authMiddleware.Authorization)
+	router.Use(handlers.Authorize)
 
 	err = http.ListenAndServe(":8080", router)
 	panic(err)
