@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"fmt"
+	"context"
 	"net/http"
 
 	"graphlabsts.core/internal/jwt"
+	"graphlabsts.core/internal/models"
 	"graphlabsts.core/internal/utils"
 )
 
@@ -17,24 +18,40 @@ func (h *Handler) Authorize(next http.Handler) http.Handler {
 			}
 		}
 
-		authToken, err := getAuthTokenFromRequest(r)
+		uad, err := processAuthToken(r)
+		if err == ErrNoAuthToken {
+			// Check refresh token and update auth token
+		}
 		if err != nil {
-			utils.JsonError(w, http.StatusUnauthorized, "error getting auth token")
+			redirectUnathorized(w, r)
 			return
 		}
 
-		fingerprint := utils.GetRequestFingerprint(r)
+		ctx := context.WithValue(r.Context(), userIdCtxKey, uad.Id)
+		ctx = context.WithValue(ctx, roleCodeCtxKey, uad.RoleCode)
 
-		uad, err := jwt.ParseToken(authToken)
-		if err != nil {
-			utils.JsonError(w, http.StatusUnauthorized, err.Error())
-			return
-		}
-
-		fmt.Println(*uad, fingerprint)
-
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func processAuthToken(r *http.Request) (*models.UserAuthData, error) {
+	authToken, err := getAuthTokenFromRequest(r)
+	if err != nil {
+		return nil, ErrNoAuthToken
+	}
+
+	fingerprint := utils.GetRequestFingerprint(r)
+
+	uad, err := jwt.ParseToken(authToken)
+	if err != nil {
+		return nil, ErrParsingToken
+	}
+
+	if uad.Fingerprint != fingerprint {
+		return nil, ErrDiffFingerprint
+	}
+
+	return uad, nil
 }
 
 func getAuthTokenFromRequest(r *http.Request) (string, error) {
@@ -53,4 +70,8 @@ func getRefreshTokenFromRequest(r *http.Request) (string, error) {
 	}
 
 	return cookie.Value, nil
+}
+
+func redirectUnathorized(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
