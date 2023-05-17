@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"html/template"
 	"io"
 	"net/http"
 
@@ -11,24 +10,9 @@ import (
 	"graphlabsts.core/internal/repo"
 	"graphlabsts.core/internal/utils"
 	"graphlabsts.core/internal/validators"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
-type Handler struct {
-	Tmpl *template.Template
-	Repo repo.Repo
-}
-
-func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
-	err := h.Tmpl.ExecuteTemplate(w, "loginPage", nil)
-	if err != nil {
-		utils.JsonError(w, http.StatusInternalServerError, "Template error")
-		return
-	}
-}
-
-// TODO Возможно, нужен рефакторинг
+// TODO Определённо нужен рефакторинг
 func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -135,12 +119,4 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(resp)
-}
-
-func (h *Handler) ProfilePage(w http.ResponseWriter, r *http.Request) {
-	err := h.Tmpl.ExecuteTemplate(w, "profilePage", nil)
-	if err != nil {
-		utils.JsonError(w, http.StatusInternalServerError, "Template error")
-		return
-	}
 }
