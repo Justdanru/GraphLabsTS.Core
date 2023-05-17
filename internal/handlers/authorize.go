@@ -16,7 +16,7 @@ func (h *Handler) Authorize(next http.Handler) http.Handler {
 				return
 			}
 		}
-		fmt.Println("Middleware is working") ////////////////////////////////////////////
+
 		authToken, err := getAuthTokenFromRequest(r)
 		if err != nil {
 			utils.JsonError(w, http.StatusUnauthorized, "error getting auth token")
