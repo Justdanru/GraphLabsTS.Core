@@ -6,6 +6,7 @@ import (
 
 	"graphlabsts.core/internal/jwt"
 	"graphlabsts.core/internal/models"
+	"graphlabsts.core/internal/repo"
 	"graphlabsts.core/internal/utils"
 )
 
@@ -18,9 +19,20 @@ func (h *Handler) Authorize(next http.Handler) http.Handler {
 			}
 		}
 
-		uad, err := processAuthToken(r)
+		uad, err := checkAuthToken(r)
 		if err == ErrNoAuthToken {
-			// Check refresh token and update auth token
+			// Проверить токен обновления
+			// Если он отсутствует, то перенаправить на главную
+			// Если токен обновления есть, то:
+			//		Проверить наличие токена обновления в БД
+			//  	Сравнить фингерпринт запроса с фингерпринтом в БД
+			//   	Если совпадают, то обновить токен авторизации и токен обновления, записать в БД
+			// 		Если фингерпринты не совпадают, то удалить все сессии пользователя из БД и перенаправить на главную
+			err = h.checkRefreshToken(r)
+			if err == ErrNoRefreshToken {
+				redirectUnathorized(w, r)
+				return
+			}
 		}
 		if err != nil {
 			redirectUnathorized(w, r)
@@ -34,7 +46,7 @@ func (h *Handler) Authorize(next http.Handler) http.Handler {
 	})
 }
 
-func processAuthToken(r *http.Request) (*models.UserAuthData, error) {
+func checkAuthToken(r *http.Request) (*models.UserAuthData, error) {
 	authToken, err := getAuthTokenFromRequest(r)
 	if err != nil {
 		return nil, ErrNoAuthToken
@@ -52,6 +64,26 @@ func processAuthToken(r *http.Request) (*models.UserAuthData, error) {
 	}
 
 	return uad, nil
+}
+
+func (h *Handler) checkRefreshToken(r *http.Request) error {
+	refreshToken, err := getRefreshTokenFromRequest(r)
+	if err != nil {
+		return ErrNoRefreshToken
+	}
+
+	fingerprint := utils.GetRequestFingerprint(r)
+
+	rs, err := h.Repo.GetRefreshSessionByToken(refreshToken)
+	if err == repo.ErrNoRefreshSessions {
+		return ErrNoRefreshSession
+	}
+
+	if rs.Fingerprint != fingerprint {
+		return ErrDiffFingerprint
+	}
+
+	return nil
 }
 
 func getAuthTokenFromRequest(r *http.Request) (string, error) {

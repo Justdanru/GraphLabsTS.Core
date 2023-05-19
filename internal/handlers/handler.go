@@ -14,9 +14,11 @@ type Handler struct {
 }
 
 var (
-	ErrNoAuthToken     = errors.New("no auth token")
-	ErrParsingToken    = errors.New("error parsing token")
-	ErrDiffFingerprint = errors.New("different fingerprint")
+	ErrNoAuthToken      = errors.New("no auth token")
+	ErrNoRefreshToken   = errors.New("no refresh token")
+	ErrParsingToken     = errors.New("error parsing token")
+	ErrDiffFingerprint  = errors.New("different fingerprint")
+	ErrNoRefreshSession = errors.New("no refresh session")
 )
 
 type ctxKey string

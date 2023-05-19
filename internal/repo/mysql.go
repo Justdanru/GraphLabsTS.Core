@@ -69,6 +69,18 @@ func (r *MySQLRepo) GetRefreshSessionsCountByUserId(userId int64) (int, error) {
 	return result, nil
 }
 
+func (r *MySQLRepo) GetRefreshSessionByToken(token string) (*models.RefreshSession, error) {
+	rs := &models.RefreshSession{}
+
+	row := r.DB.QueryRow("SELECT refresh_token, fingerprint, user_id FROM refresh_sessions WHERE refresh_token = ?", token)
+	err := row.Scan(&rs.RefreshToken, &rs.Fingerprint, &rs.UserId)
+	if err == sql.ErrNoRows {
+		return nil, ErrNoRefreshSessions
+	}
+
+	return rs, nil
+}
+
 func (r *MySQLRepo) AddRefreshSession(rs *models.RefreshSession) error {
 	_, err := r.DB.Exec(
 		"INSERT INTO refresh_sessions (refresh_token, fingerprint, user_id) VALUES (?, ?, ?);",
