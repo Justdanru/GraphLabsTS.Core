@@ -7,12 +7,10 @@ import (
 
 	"graphlabsts.core/internal/jwt"
 	"graphlabsts.core/internal/models"
-	"graphlabsts.core/internal/repo"
 	"graphlabsts.core/internal/utils"
 	"graphlabsts.core/internal/validators"
 )
 
-// TODO Определённо нужен рефакторинг
 func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -27,91 +25,31 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var isValid bool
-	isValid, err = validators.IsLoginValid(userCredentials.Login)
+	err = validateCredentials(userCredentials)
 	if err != nil {
-		utils.JsonError(w, http.StatusInternalServerError, err.Error())
-		return
-	} else if !isValid {
-		utils.JsonError(w, http.StatusBadRequest, "wrong login format")
-		return
-	}
-	isValid, err = validators.IsPasswordValid(userCredentials.Password)
-	if err != nil {
-		utils.JsonError(w, http.StatusInternalServerError, err.Error())
-		return
-	} else if !isValid {
-		utils.JsonError(w, http.StatusBadRequest, "wrong password format")
+		utils.JsonError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	uad, err := h.Repo.Authenticate(userCredentials)
-	if err == repo.ErrNoUser {
-		utils.JsonError(w, http.StatusBadRequest, "user not found")
+	if err != nil {
+		utils.JsonError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	if err == repo.ErrWrongPassword {
-		utils.JsonError(w, http.StatusBadRequest, "wrong password")
-		return
-	}
+
 	uad.Fingerprint = utils.GetRequestFingerprint(r)
 
-	authToken, err := jwt.CreateAuthToken(uad)
+	tokenPair, err := jwt.CreateTokenPair(uad)
 	if err != nil {
 		utils.JsonError(w, http.StatusInternalServerError, err.Error())
-		return
 	}
 
-	refreshToken, err := jwt.CreateRefreshToken(uad)
+	err = h.AddRefreshSession(uad, tokenPair.RefreshToken)
 	if err != nil {
 		utils.JsonError(w, http.StatusInternalServerError, err.Error())
-		return
 	}
 
-	refreshSession := &models.RefreshSession{
-		RefreshToken: refreshToken,
-		Fingerprint:  uad.Fingerprint,
-		UserId:       uad.Id,
-	}
-
-	sessionsCount, err := h.Repo.GetRefreshSessionsCountByUserId(uad.Id)
-	if err != nil {
-		utils.JsonError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if sessionsCount > 0 {
-		err = h.Repo.DeleteAllRefreshSessionsByUserId(uad.Id)
-	}
-	if err != nil {
-		utils.JsonError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	err = h.Repo.AddRefreshSession(refreshSession)
-	if err != nil {
-		utils.JsonError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	authTokenCookie := &http.Cookie{
-		Name:     "glts-auth-token",
-		Value:    authToken,
-		Path:     "/",
-		Expires:  jwt.GetAuthTokenExpTime(),
-		HttpOnly: true,
-	}
-
-	refreshTokenCookie := &http.Cookie{
-		Name:     "glts-refresh-token",
-		Value:    refreshToken,
-		Path:     "/",
-		Expires:  jwt.GetRefreshTokenExpTime(),
-		HttpOnly: true,
-	}
-
-	http.SetCookie(w, authTokenCookie)
-	http.SetCookie(w, refreshTokenCookie)
+	setSessionCookies(w, tokenPair)
 
 	resp, _ := json.Marshal(map[string]interface{}{
 		"url": "/profile",
@@ -119,4 +57,22 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(resp)
+}
+
+func validateCredentials(userCredentials *models.UserCredentials) error {
+	isValid, err := validators.IsLoginValid(userCredentials.Login)
+	if err != nil {
+		return err
+	} else if !isValid {
+		return ErrWrongLoginFormat
+	}
+
+	isValid, err = validators.IsPasswordValid(userCredentials.Password)
+	if err != nil {
+		return err
+	} else if !isValid {
+		return ErrWrongPasswordFormat
+	}
+
+	return nil
 }
