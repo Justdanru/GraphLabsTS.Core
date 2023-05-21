@@ -49,7 +49,7 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 		utils.JsonError(w, http.StatusInternalServerError, err.Error())
 	}
 
-	setSessionCookies(w, tokenPair)
+	SetSessionCookies(w, tokenPair)
 
 	resp, _ := json.Marshal(map[string]interface{}{
 		"url": "/profile",
