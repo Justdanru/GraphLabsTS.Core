@@ -19,22 +19,37 @@ func (h *Handler) Authorize(next http.Handler) http.Handler {
 			}
 		}
 
-		uad, err := checkAuthToken(r)
+		uad := &models.UserAuthData{}
+		var err error
+
+		uad, err = checkAuthToken(r)
 		if err == ErrNoAuthToken {
-			// Проверить токен обновления
-			// Если он отсутствует, то перенаправить на главную
-			// Если токен обновления есть, то:
-			//		Проверить наличие токена обновления в БД
-			//  	Сравнить фингерпринт запроса с фингерпринтом в БД
-			//   	Если совпадают, то обновить токен авторизации и токен обновления, записать в БД
-			// 		Если фингерпринты не совпадают, то удалить все сессии пользователя из БД и перенаправить на главную
-			err = h.checkRefreshToken(r)
-			if err == ErrNoRefreshToken {
+			var oldRefreshToken string
+			uad, oldRefreshToken, err = h.checkRefreshToken(r)
+			if (err == ErrNoRefreshToken) || (err == ErrParsingToken) {
+				redirectUnathorized(w, r)
+				return
+			} else if err == ErrDiffFingerprint {
+				_ = h.Repo.DeleteAllRefreshSessionsByUserId(uad.Id)
 				redirectUnathorized(w, r)
 				return
 			}
-		}
-		if err != nil {
+
+			tokenPair, err := jwt.CreateTokenPair(uad)
+			if err != nil {
+				redirectUnathorized(w, r)
+				return
+			}
+
+			err = h.UpdateRefreshSession(tokenPair.RefreshToken, uad, oldRefreshToken)
+			if err != nil {
+				_ = h.Repo.DeleteAllRefreshSessionsByUserId(uad.Id)
+				redirectUnathorized(w, r)
+				return
+			}
+
+			SetSessionCookies(w, tokenPair)
+		} else if err != nil {
 			redirectUnathorized(w, r)
 			return
 		}
@@ -60,30 +75,35 @@ func checkAuthToken(r *http.Request) (*models.UserAuthData, error) {
 	}
 
 	if uad.Fingerprint != fingerprint {
-		return nil, ErrDiffFingerprint
+		return uad, ErrDiffFingerprint
 	}
 
 	return uad, nil
 }
 
-func (h *Handler) checkRefreshToken(r *http.Request) error {
+func (h *Handler) checkRefreshToken(r *http.Request) (*models.UserAuthData, string, error) {
 	refreshToken, err := getRefreshTokenFromRequest(r)
 	if err != nil {
-		return ErrNoRefreshToken
+		return nil, "", ErrNoRefreshToken
 	}
 
 	fingerprint := utils.GetRequestFingerprint(r)
 
+	uad, err := jwt.ParseToken(refreshToken)
+	if err != nil {
+		return nil, "", ErrParsingToken
+	}
+
 	rs, err := h.Repo.GetRefreshSessionByToken(refreshToken)
 	if err == repo.ErrNoRefreshSessions {
-		return ErrNoRefreshSession
+		return nil, "", ErrNoRefreshSession
 	}
 
-	if rs.Fingerprint != fingerprint {
-		return ErrDiffFingerprint
+	if (rs.Fingerprint != fingerprint) || (uad.Fingerprint != fingerprint) {
+		return nil, "", ErrDiffFingerprint
 	}
 
-	return nil
+	return uad, refreshToken, nil
 }
 
 func getAuthTokenFromRequest(r *http.Request) (string, error) {

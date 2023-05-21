@@ -34,6 +34,30 @@ func (h *Handler) AddRefreshSession(uad *models.UserAuthData, refreshToken strin
 	return nil
 }
 
+func (h *Handler) UpdateRefreshSession(refreshToken string, uad *models.UserAuthData, oldRefreshToken string) error {
+	refreshSessionsCount, err := h.Repo.GetRefreshSessionsCountByUserId(uad.Id)
+	if err != nil {
+		return err
+	}
+
+	if refreshSessionsCount > MAX_REFRESH_SESSIONS_PER_USER {
+		return ErrTooManyRefreshSessions
+	}
+
+	rs := &models.RefreshSession{
+		RefreshToken: refreshToken,
+		Fingerprint:  uad.Fingerprint,
+		UserId:       uad.Id,
+	}
+
+	err = h.Repo.UpdateRefreshSession(rs, oldRefreshToken)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func SetSessionCookies(w http.ResponseWriter, tokenPair *models.TokenPair) {
 	authTokenCookie := &http.Cookie{
 		Name:     "glts-auth-token",

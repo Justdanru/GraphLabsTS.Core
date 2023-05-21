@@ -9,9 +9,10 @@ import (
 type Repo interface {
 	Connect(dsn string) error
 	Authenticate(userCredentials *models.UserCredentials) (*models.UserAuthData, error)
+	AddRefreshSession(rs *models.RefreshSession) error
 	GetRefreshSessionsCountByUserId(userId int64) (int, error)
 	GetRefreshSessionByToken(token string) (*models.RefreshSession, error)
-	AddRefreshSession(rs *models.RefreshSession) error
+	UpdateRefreshSession(rs *models.RefreshSession, oldRefreshToken string) error
 	DeleteAllRefreshSessionsByUserId(userId int64) error
 }
 

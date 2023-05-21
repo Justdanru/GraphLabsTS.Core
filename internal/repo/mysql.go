@@ -53,6 +53,18 @@ func (r *MySQLRepo) Authenticate(userCredentials *models.UserCredentials) (*mode
 	return uad, nil
 }
 
+func (r *MySQLRepo) AddRefreshSession(rs *models.RefreshSession) error {
+	_, err := r.DB.Exec(
+		"INSERT INTO refresh_sessions (refresh_token, fingerprint, user_id) VALUES (?, ?, ?);",
+		rs.RefreshToken, rs.Fingerprint, rs.UserId,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *MySQLRepo) GetRefreshSessionsCountByUserId(userId int64) (int, error) {
 	var resultStr string
 	row := r.DB.QueryRow("SELECT COUNT(id) FROM refresh_sessions WHERE user_id = ?;", userId)
@@ -81,10 +93,10 @@ func (r *MySQLRepo) GetRefreshSessionByToken(token string) (*models.RefreshSessi
 	return rs, nil
 }
 
-func (r *MySQLRepo) AddRefreshSession(rs *models.RefreshSession) error {
+func (r *MySQLRepo) UpdateRefreshSession(rs *models.RefreshSession, oldRefreshToken string) error {
 	_, err := r.DB.Exec(
-		"INSERT INTO refresh_sessions (refresh_token, fingerprint, user_id) VALUES (?, ?, ?);",
-		rs.RefreshToken, rs.Fingerprint, rs.UserId,
+		"UPDATE refresh_sessions SET refresh_token = ?, fingerprint = ?, created_at = NOW() WHERE refresh_token = ?;",
+		rs.RefreshToken, rs.Fingerprint, oldRefreshToken,
 	)
 	if err != nil {
 		return err

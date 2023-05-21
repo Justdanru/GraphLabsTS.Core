@@ -23,10 +23,12 @@ var (
 
 func GetAuthTokenExpTime() time.Time {
 	return time.Now().Add(AUTH_TOKEN_DURATION_MINUTES * time.Minute)
+	// return time.Now().Add(5 * time.Second)
 }
 
 func GetRefreshTokenExpTime() time.Time {
 	return time.Now().Add(REFRESH_TOKEN_DURATION_HOURS * time.Hour)
+	// return time.Now().Add(20 * time.Second)
 }
 
 func createToken(uad *models.UserAuthData, expTime time.Time) (string, error) {
@@ -45,7 +47,7 @@ func createToken(uad *models.UserAuthData, expTime time.Time) (string, error) {
 	return tokenString, nil
 }
 
-func CreateAuthToken(uad *models.UserAuthData) (string, error) {
+func createAuthToken(uad *models.UserAuthData) (string, error) {
 	tokenString, err := createToken(uad, GetAuthTokenExpTime())
 	if err != nil {
 		return "", err
@@ -54,13 +56,30 @@ func CreateAuthToken(uad *models.UserAuthData) (string, error) {
 	return tokenString, nil
 }
 
-func CreateRefreshToken(uad *models.UserAuthData) (string, error) {
+func createRefreshToken(uad *models.UserAuthData) (string, error) {
 	tokenString, err := createToken(uad, GetRefreshTokenExpTime())
 	if err != nil {
 		return "", err
 	}
 
 	return tokenString, nil
+}
+
+func CreateTokenPair(uad *models.UserAuthData) (*models.TokenPair, error) {
+	var err error
+	tokenPair := &models.TokenPair{}
+
+	tokenPair.AuthToken, err = createAuthToken(uad)
+	if err != nil {
+		return nil, err
+	}
+
+	tokenPair.RefreshToken, err = createRefreshToken(uad)
+	if err != nil {
+		return nil, err
+	}
+
+	return tokenPair, nil
 }
 
 func ParseToken(tokenString string) (*models.UserAuthData, error) {
