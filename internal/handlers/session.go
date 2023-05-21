@@ -34,7 +34,7 @@ func (h *Handler) AddRefreshSession(uad *models.UserAuthData, refreshToken strin
 	return nil
 }
 
-func setSessionCookies(w http.ResponseWriter, tokenPair *models.TokenPair) {
+func SetSessionCookies(w http.ResponseWriter, tokenPair *models.TokenPair) {
 	authTokenCookie := &http.Cookie{
 		Name:     "glts-auth-token",
 		Value:    tokenPair.AuthToken,
