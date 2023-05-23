@@ -3,17 +3,26 @@
         <div class="row">
             <div class="col-md-6 offset-md-0">
                 <div class="ms-4 w-100" style="overflow-wrap: break-word;">
-                    <p><b>Роль:</b> {{ .RoleString }}</p>
+                    <p><b>Роль: </b>{{ .RoleString }}</p>
                     <p>
-                        <b>Фамилия:</b> {{ .Surname }}
+                        <b>Фамилия: </b>{{ .Surname }}
                     </p>
                     <p>
-                        <b>Имя:</b> {{ .Name }}
+                        <b>Имя: </b>{{ .Name }}
                     </p>
+                    {{ if ne .LastName "" }}
+                        <p>
+                            <b>Отчество: </b>{{ .LastName }}
+                        </p>
+                    {{ end }}
                     <p>
-                        <b>Отчество:</b> {{ .LastName }}
+                        <b>Telegram ID: </b>
+                        {{ if ne .TelegramId "" }} 
+                            {{ .TelegramId }}
+                        {{ else }}
+                            не указан
+                        {{ end }}
                     </p>
-                    <p><b>Telegram ID:</b> не указан</p>
                     <p class="mb-1"><b>Учебные группы: </b></p>
                     <ul>
                         <li>Б19-504</li>

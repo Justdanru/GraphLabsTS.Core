@@ -5,4 +5,5 @@ type ProfilePageContext struct {
 	Name       string
 	Surname    string
 	LastName   string
+	TelegramId string
 }

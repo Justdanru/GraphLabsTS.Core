@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"graphlabsts.core/internal/models"
@@ -42,8 +41,7 @@ func (h *Handler) getProfilePagetContext(r *http.Request) (*models.ProfilePageCo
 	ctx.Name = user.Name
 	ctx.Surname = user.Surname
 	ctx.LastName = user.LastName
-
-	fmt.Println(ctx) //debug-output
+	ctx.TelegramId = user.TelegramId
 
 	return ctx, nil
 }
