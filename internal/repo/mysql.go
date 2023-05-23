@@ -116,6 +116,19 @@ func (r *MySQLRepo) DeleteAllRefreshSessionsByUserId(userId int64) error {
 	return nil
 }
 
+func (r *MySQLRepo) GetUser(userId int64) (*models.User, error) {
+	user := &models.User{}
+
+	row := r.DB.QueryRow("SELECT name, surname, last_name FROM users WHERE id = ?", userId)
+	err := row.Scan(&user.Name, &user.Surname, &user.LastName)
+	fmt.Println(user) //debug-output
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func getPasswordHash(password string, salt string) string {
 	return fmt.Sprintf("%x", sha3.Sum256([]byte(password+salt+pepper)))
 }
