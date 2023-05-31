@@ -7,4 +7,8 @@ type User struct {
 	Surname    string
 	LastName   string
 	TelegramId string
+	Groups     []string
+	Subjects   []string
+	CreatedAt  string
+	UpdatedAt  string
 }

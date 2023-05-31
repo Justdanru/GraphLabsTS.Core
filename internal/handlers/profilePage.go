@@ -42,6 +42,10 @@ func (h *Handler) getProfilePagetContext(r *http.Request) (*models.ProfilePageCo
 	ctx.Surname = user.Surname
 	ctx.LastName = user.LastName
 	ctx.TelegramId = user.TelegramId
+	ctx.CreatedAt = user.CreatedAt
+	ctx.UpdatedAt = user.UpdatedAt
+	ctx.Groups = user.Groups
+	ctx.Subjects = user.Subjects
 
 	return ctx, nil
 }

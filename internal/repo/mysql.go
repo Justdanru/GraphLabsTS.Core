@@ -119,9 +119,9 @@ func (r *MySQLRepo) DeleteAllRefreshSessionsByUserId(userId int64) error {
 func (r *MySQLRepo) GetUser(userId int64) (*models.User, error) {
 	user := &models.User{}
 
-	var telegramId, lastName sql.NullString
-	row := r.DB.QueryRow("SELECT name, surname, last_name, tg_id FROM users WHERE id = ?", userId)
-	err := row.Scan(&user.Name, &user.Surname, &lastName, &telegramId)
+	var telegramId, lastName, createdAt, updatedAt sql.NullString
+	row := r.DB.QueryRow("SELECT name, surname, last_name, tg_id, created_at, updated_at FROM users WHERE id = ?", userId)
+	err := row.Scan(&user.Name, &user.Surname, &lastName, &telegramId, &createdAt, &updatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -135,6 +135,52 @@ func (r *MySQLRepo) GetUser(userId int64) (*models.User, error) {
 		user.TelegramId = telegramId.String
 	} else {
 		user.TelegramId = ""
+	}
+	if createdAt.Valid {
+		user.CreatedAt = createdAt.String
+	} else {
+		user.CreatedAt = ""
+	}
+	if updatedAt.Valid {
+		user.UpdatedAt = updatedAt.String
+	} else {
+		user.UpdatedAt = ""
+	}
+
+	subjectRows, err := r.DB.Query(`SELECT subjects.title FROM subjects
+	INNER JOIN teachers_to_subjects ON teachers_to_subjects.subject_id = subjects.id
+	INNER JOIN users ON teachers_to_subjects.teacher_id = users.id
+	WHERE users.id = ?`, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer subjectRows.Close()
+
+	for subjectRows.Next() {
+		var subject string
+		err = subjectRows.Scan(&subject)
+		if err != nil {
+			return nil, err
+		}
+		user.Subjects = append(user.Subjects, subject)
+	}
+
+	groupsRows, err := r.DB.Query(`SELECT student_groups.name FROM student_groups
+	INNER JOIN teachers_to_groups ON teachers_to_groups.group_id = student_groups.id
+	INNER JOIN users ON teachers_to_groups.teacher_id = users.id
+	WHERE users.id = ?`, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer groupsRows.Close()
+
+	for groupsRows.Next() {
+		var group string
+		err = groupsRows.Scan(&group)
+		if err != nil {
+			return nil, err
+		}
+		user.Groups = append(user.Groups, group)
 	}
 
 	return user, nil
