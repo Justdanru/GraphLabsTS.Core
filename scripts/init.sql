@@ -59,7 +59,7 @@ CREATE TABLE student_groups (
 );
 
 CREATE TABLE students_to_groups (
-    student_id SMALLINT UNSIGNED UNIQUE,
+    student_id SMALLINT UNSIGNED,
     group_id TINYINT UNSIGNED,
     PRIMARY KEY (student_id, group_id),
     FOREIGN KEY (student_id) REFERENCES users (id)
@@ -69,7 +69,7 @@ CREATE TABLE students_to_groups (
 );
 
 CREATE TABLE teachers_to_groups (
-    teacher_id SMALLINT UNSIGNED UNIQUE,
+    teacher_id SMALLINT UNSIGNED,
     group_id TINYINT UNSIGNED,
     PRIMARY KEY (teacher_id, group_id),
     FOREIGN KEY (teacher_id) REFERENCES users (id)
