@@ -118,10 +118,14 @@ func (r *MySQLRepo) DeleteAllRefreshSessionsByUserId(userId int64) error {
 
 func (r *MySQLRepo) GetUser(userId int64) (*models.User, error) {
 	user := &models.User{}
+	user.Id = userId
 
 	var telegramId, lastName, createdAt, updatedAt sql.NullString
 	row := r.DB.QueryRow("SELECT name, surname, last_name, tg_id, created_at, updated_at FROM users WHERE id = ?", userId)
 	err := row.Scan(&user.Name, &user.Surname, &lastName, &telegramId, &createdAt, &updatedAt)
+	if err == sql.ErrNoRows {
+		return nil, ErrNoSuchEntity
+	}
 	if err != nil {
 		return nil, err
 	}

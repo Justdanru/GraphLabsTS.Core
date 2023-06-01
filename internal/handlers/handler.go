@@ -30,4 +30,5 @@ var (
 	ErrDiffFingerprint        = errors.New("different fingerprint")
 	ErrNoRefreshSession       = errors.New("no refresh session")
 	ErrTooManyRefreshSessions = errors.New("too many refresh sessions")
+	ErrEntityNotFound         = errors.New("entity not found")
 )

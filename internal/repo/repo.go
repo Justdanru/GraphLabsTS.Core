@@ -25,4 +25,5 @@ var (
 	ErrNoUser            = errors.New("user not found")
 	ErrWrongPassword     = errors.New("wrong password")
 	ErrNoRefreshSessions = errors.New("refresh session not found")
+	ErrNoSuchEntity      = errors.New("entity not found")
 )

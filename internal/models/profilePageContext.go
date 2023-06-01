@@ -1,6 +1,7 @@
 package models
 
 type ProfilePageContext struct {
+	UserId     int64
 	RoleString string
 	Name       string
 	Surname    string

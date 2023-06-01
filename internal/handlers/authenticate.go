@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -52,7 +53,7 @@ func (h *Handler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	SetSessionCookies(w, tokenPair)
 
 	resp, _ := json.Marshal(map[string]interface{}{
-		"url": "/profile",
+		"url": "/users/" + fmt.Sprint(uad.Id),
 	})
 
 	w.Header().Set("Content-Type", "application/json")
