@@ -36,7 +36,7 @@ func (h *Handler) ProfilePage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) getProfilePagetContext(userId int64) (*models.ProfilePageContext, error) {
+func (h *Handler) getProfilePageContext(userId int64) (*models.ProfilePageContext, error) {
 	ctx := &models.ProfilePageContext{}
 
 	user, err := h.Repo.GetUser(userId)
