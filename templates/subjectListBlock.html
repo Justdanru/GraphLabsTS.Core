@@ -1,0 +1,16 @@
+{{define "subjectListBlock"}}
+    <div class="containter fs-5">
+        <div class="row ms-4 col-md-3 offset-md-0 d-flex align-items-center text-center" style="overflow-wrap: break-word;">
+            {{range .Subjects}}
+                <a href="/subjects/{{.Id}}" class="d-block undecorated-link-block m-0 mb-3 border border-dark rounded-1">{{.Title}}</a>
+            {{end}}
+            <div class="d-flex justify-content-center mb-3">
+                {{if gt .Page 1}}
+                    <a href="/subjects?page={{.PrevPage}}" class="d-inline-block undecorated-link-block m-0 border border-dark rounded-1 mx-auto p-1">Пред. страница</a>
+                {{end}}
+                <a href="/subjects?page={{.NextPage}}" class="d-inline-block undecorated-link-block m-0 border border-dark rounded-1 mx-auto p-1">След. страница</a>
+            </div>
+            <a href="/subjects/new" class="d-block undecorated-link-block m-0 mb-3 border border-dark rounded-1">Добавить дисциплину</a>
+        </div>
+    </div>
+{{end}}

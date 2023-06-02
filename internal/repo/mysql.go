@@ -211,6 +211,27 @@ func (r *MySQLRepo) GetStudentGroups(limit int64, offset int64) ([]*models.Group
 	return groups, nil
 }
 
+func (r *MySQLRepo) GetSubjects(limit int64, offset int64) ([]*models.Subject, error) {
+	rows, err := r.DB.Query("SELECT id, title FROM subjects ORDER BY title ASC LIMIT ? OFFSET ?;", limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	subjects := []*models.Subject{}
+	for rows.Next() {
+		var id int64
+		var title string
+		err = rows.Scan(&id, &title)
+		if err != nil {
+			return nil, err
+		}
+		subjects = append(subjects, &models.Subject{Id: id, Title: title})
+	}
+
+	return subjects, nil
+}
+
 func getPasswordHash(password string, salt string) string {
 	return fmt.Sprintf("%x", sha3.Sum256([]byte(password+salt+pepper)))
 }

@@ -38,6 +38,8 @@ func main() {
 
 	router.HandleFunc("/groups", handlers.GroupListPage).Methods("GET")
 
+	router.HandleFunc("/subjects", handlers.SubjectListPage).Methods("GET")
+
 	router.Use(handlers.Authorize)
 
 	err = http.ListenAndServe(":8080", router)

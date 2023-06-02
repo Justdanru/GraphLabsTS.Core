@@ -20,6 +20,8 @@ type Repo interface {
 	GetUser(userId int64) (*models.User, error)
 
 	GetStudentGroups(limit int64, offset int64) ([]*models.Group, error)
+
+	GetSubjects(limit int64, offset int64) ([]*models.Subject, error)
 }
 
 var (
