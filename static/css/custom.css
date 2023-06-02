@@ -1,0 +1,8 @@
+.undecorated-link-block {
+    text-decoration: none;
+    color: #332D2D;
+}
+
+.undecorated-link-block:hover {
+    color: #54B4D3;
+}

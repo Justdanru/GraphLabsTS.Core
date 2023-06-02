@@ -18,7 +18,7 @@ func (h *Handler) ProfilePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx, err := h.getProfilePagetContext(userId)
+	ctx, err := h.getProfilePageContext(userId)
 	if (err != nil) && (err != ErrEntityNotFound) {
 		utils.JsonError(w, http.StatusInternalServerError, "Template error")
 		return

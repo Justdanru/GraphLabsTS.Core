@@ -18,6 +18,8 @@ type Repo interface {
 	DeleteAllRefreshSessionsByUserId(userId int64) error
 
 	GetUser(userId int64) (*models.User, error)
+
+	GetStudentGroups(limit int64, offset int64) ([]*models.Group, error)
 }
 
 var (

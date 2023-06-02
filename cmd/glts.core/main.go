@@ -33,7 +33,10 @@ func main() {
 
 	router.HandleFunc("/login", handlers.LoginPage).Methods("GET")
 	router.HandleFunc("/api/auth", handlers.Authenticate).Methods("POST")
+
 	router.HandleFunc("/users/{user_id}", handlers.ProfilePage).Methods("GET")
+
+	router.HandleFunc("/groups", handlers.GroupListPage).Methods("GET")
 
 	router.Use(handlers.Authorize)
 

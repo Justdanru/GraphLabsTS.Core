@@ -1,0 +1,16 @@
+{{define "groupListBlock"}}
+    <div class="containter fs-5">
+        <div class="row ms-4 col-md-3 offset-md-0 d-flex align-items-center text-center">
+            {{range .Groups}}
+                <a href="/groups/{{.Id}}" class="d-block undecorated-link-block m-0 mb-3 border border-dark rounded-1">{{.Name}}</a>
+            {{end}}
+            <div class="d-flex justify-content-center mb-3">
+                {{if gt .Page 1}}
+                    <a href="/groups?page={{.PrevPage}}" class="d-inline-block undecorated-link-block m-0 border border-dark rounded-1 mx-auto p-1">Пред. страница</a>
+                {{end}}
+                <a href="/groups?page={{.NextPage}}" class="d-inline-block undecorated-link-block m-0 border border-dark rounded-1 mx-auto p-1">След. страница</a>
+            </div>
+            <a href="/groups/new" class="d-block undecorated-link-block m-0 mb-3 border border-dark rounded-1">Добавить группу</a>
+        </div>
+    </div>
+{{end}}
