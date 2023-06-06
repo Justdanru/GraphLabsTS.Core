@@ -20,7 +20,7 @@ func (h *Handler) GroupExcelTemplate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Disposition", "attachment; filename=group_template.xls")
+	w.Header().Set("Content-Disposition", "attachment; filename=group_template.xlsx")
 	w.Header().Set("Content-Type", "application/vnd.ms-excel")
 
 	_, err = w.Write(bytes.Bytes())
