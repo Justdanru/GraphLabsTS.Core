@@ -232,6 +232,26 @@ func (r *MySQLRepo) GetSubjects(limit int64, offset int64) ([]*models.Subject, e
 	return subjects, nil
 }
 
+func (r *MySQLRepo) GetAllSubjectStrings() ([]string, error) {
+	rows, err := r.DB.Query("SELECT title FROM subjects ORDER BY title ASC;")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	subjects := []string{}
+	for rows.Next() {
+		var subject string
+		err = rows.Scan(&subject)
+		if err != nil {
+			return nil, err
+		}
+		subjects = append(subjects, subject)
+	}
+
+	return subjects, nil
+}
+
 func getPasswordHash(password string, salt string) string {
 	return fmt.Sprintf("%x", sha3.Sum256([]byte(password+salt+pepper)))
 }

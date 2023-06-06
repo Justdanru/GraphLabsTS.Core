@@ -22,6 +22,7 @@ type Repo interface {
 	GetStudentGroups(limit int64, offset int64) ([]*models.Group, error)
 
 	GetSubjects(limit int64, offset int64) ([]*models.Subject, error)
+	GetAllSubjectStrings() ([]string, error)
 }
 
 var (

@@ -7,6 +7,7 @@ FROM alpine AS run_stage
 WORKDIR /glts_binary
 COPY --from=build_stage /go/bin/glts.core /glts_binary/
 COPY ./templates/ /glts_binary/templates/
+COPY ./internal/excel/templates/ /glts_binary/excel_templates/
 RUN chmod +x ./glts.core
 EXPOSE 8081/tcp
 ENTRYPOINT ./glts.core

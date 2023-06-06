@@ -38,6 +38,9 @@ func main() {
 
 	router.HandleFunc("/groups", handlers.GroupListPage).Methods("GET")
 
+	router.HandleFunc("/groups/new", handlers.NewGroupPage).Methods("GET")
+	router.HandleFunc("/groups/new/template", handlers.GroupExcelTemplate).Methods("GET")
+
 	router.HandleFunc("/subjects", handlers.SubjectListPage).Methods("GET")
 
 	router.Use(handlers.Authorize)
