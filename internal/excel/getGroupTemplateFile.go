@@ -16,7 +16,6 @@ func GetGroupTemplateFile(subjects []string) (*bytes.Buffer, error) {
 	defer file.Close()
 
 	i := 2
-	fmt.Println(subjects) //debug-output
 	for _, subject := range subjects {
 		file.SetCellValue("Доступные дисциплины", "A"+fmt.Sprint(i), subject)
 		i++
