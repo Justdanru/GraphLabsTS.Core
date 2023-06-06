@@ -3,7 +3,7 @@
         <div class="row ms-4 col-md-3 offset-md-0 d-flex align-items-center text-center">
             <form action="/groups" method="POST" enctype="multipart/form-data">
                 <label for="fileInput" class="form-label">Выберите файл для загрузки</label>
-                <input type="file" class="form-control mb-3" id="fileInput" required
+                <input type="file" name="fileInput" class="form-control mb-3" id="fileInput" required
                     accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
                 <a href="/groups/new/template" class="d-inline-block mx-auto btn btn-info text-dark mb-3 fs-5"
                     download>Скачать шаблон</a>
