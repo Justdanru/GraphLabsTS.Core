@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"graphlabsts.core/internal/excel"
@@ -15,5 +16,11 @@ func (h *Handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	err = excel.ReadGroupFile(file)
+	group, err := excel.ReadGroupFile(file)
+	if err != nil {
+		utils.JsonError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	fmt.Println(group)
 }
