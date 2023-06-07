@@ -37,6 +37,7 @@ func main() {
 	router.HandleFunc("/users/{user_id}", handlers.ProfilePage).Methods("GET")
 
 	router.HandleFunc("/groups", handlers.GroupListPage).Methods("GET")
+	router.HandleFunc("/groups", handlers.CreateGroup).Methods("POST")
 
 	router.HandleFunc("/groups/new", handlers.NewGroupPage).Methods("GET")
 	router.HandleFunc("/groups/new/template", handlers.GroupExcelTemplate).Methods("GET")
